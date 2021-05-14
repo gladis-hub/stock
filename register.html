@@ -1,0 +1,58 @@
+	
+//here is my registration form
+
+	<div class="reg">
+<h1>Registration form</h1>
+<form method="POST">
+	{% csrf_token %}
+	<!-- {{form}} -->
+	<input type="text" name="firstname" placeholder="first name"><br><br>
+	<input type="text" name="lastname" placeholder="last name"><br><br>
+	<input type="email" name="email" placeholder="E-mail"><br><br>
+	<input type="text" name="username" placeholder="username"><br><br>
+	<input type="password" name="password1" placeholder="password1"><br><br>
+	<input type="password" name="password2" placeholder="confirm password"><br><br>
+	<!-- <input type="number" name="phoneNo" placeholder="phone number"><br><br>
+	<input type="text" name="position" placeholder="position"><br><br>
+	Gender <br><input type="radio" name="sex" value="male"> male<br>
+	<input type="radio" name="sex" value="female"> female<br><br> -->
+	<input type="submit" name="submit"><p>already have account?<a href="{% url 'login' %}">login</a></p>
+</div>
+
+
+	
+</form>
+<div>
+{% for message in messages %}
+<h1>{{message}}</h1>
+{% endfor %}
+</div>
+
+
+// here is my views.py
+
+def register(request):
+     if request.method == 'POST':
+          
+          firstname = request.POST['firstname']
+          lastname = request.POST['lastname']
+          email = request.POST['email']
+          username = request.POST['username']
+          password1 = request.POST['password1']
+          password2 = request.POST['password2']
+
+          if password1==password2:
+                if User.objects.filter(username=username).exists():
+                      print('username taken')
+                elif User.objects.filter(email=email).exists():
+                       print('email already exist')
+               else:    
+               user = User.objects.create_user(username=username, password=password1, email=email, first_name=firstname, last_name=lastname)
+               user.save();
+               print('user created')
+
+          else:
+               print('password not match')
+               return redirect('../login/')
+     else:
+          return render(request, 'register.html')
